@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Paulis Birthday Quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Schöne Schrift von Google Fonts (optional, aber hübsch) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0f172a;
+      --bg-card: #111827;
+      --accent: #f97316;
+      --accent-soft: rgba(249, 115, 22, 0.12);
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --success: #22c55e;
+      --error: #ef4444;
+      --border: #1f2937;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at top, #1f2937 0, #020617 45%, #000 100%);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 960px;
+      background: linear-gradient(135deg, rgba(15,23,42,0.96), rgba(17,24,39,0.98));
+      border-radius: 28px;
+      border: 1px solid rgba(148,163,184,0.25);
+      box-shadow:
+        0 24px 60px rgba(15,23,42,0.75),
+        0 0 0 1px rgba(15,23,42,0.7);
+      padding: 28px 22px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @media (min-width: 768px) {
+      .app {
+        padding: 32px 32px 26px;
+      }
+    }
+
+    .glow {
+      position: absolute;
+      inset: -100px;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(249,115,22,0.14), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(59,130,246,0.12), transparent 50%);
+      opacity: 0.6;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 24px;
+    }
+
+    @media (min-width: 640px) {
+      header {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+      }
+    }
+
+    .title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h1 span.emoji {
+      font-size: 1.6em;
+      filter: drop-shadow(0 0 12px rgba(249,115,22,0.75));
+    }
+
+    .subtitle {
+      font-size: 0.98rem;
+      color: var(--text-muted);
+      max-width: 460px;
+    }
+
+    .badge {
+      align-self: flex-start;
+      padding: 5px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(249,115,22,0.6);
+      background: linear-gradient(135deg, rgba(249,115,22,0.18), rgba(17,24,39,0.9));
+      font-size: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 10px rgba(249,115,22,0.9);
+    }
+
+    .progress-card {
+      margin-bottom: 18px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(55,65,81,0.85);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .progress-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 0, #f97316 0, #ea580c 40%, #991b1b 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      box-shadow: 0 0 20px rgba(249,115,22,0.65);
+    }
+
+    .progress-info {
+      flex: 1;
+    }
+
+    .progress-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .progress-bar-outer {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: #020617;
+      overflow: hidden;
+      border: 1px solid rgba(31,41,55,0.9);
+    }
+
+    .progress-bar-inner {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #f97316, #fb923c, #facc15);
+      transition: width 0.4s ease;
+    }
+
+    .progress-count {
+      font-size: 0.86rem;
+      font-weight: 500;
+      min-width: 95px;
+      text-align: right;
+    }
+
+    .questions-grid {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    @media (min-width: 768px) {
+      .questions-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .question-card {
+      position: relative;
+      background: radial-gradient(circle at top left, rgba(249,115,22,0.14), transparent 60%);
+      background-color: rgba(15,23,42,0.96);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(55,65,81,0.9);
+      padding: 13px 12px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 14px 30px rgba(15,23,42,0.85);
+      overflow: hidden;
+    }
+
+    .question-number {
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(148,163,184,0.9);
+    }
+
+    .question-text {
+      font-size: 0.98rem;
+      line-height: 1.4;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .input-row input {
+      flex: 1;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(55,65,81,0.9);
+      background: rgba(15,23,42,0.95);
+      color: var(--text-main);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, transform 0.05s ease;
+    }
+
+    .input-row input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(249,115,22,0.7), 0 0 18px rgba(249,115,22,0.5);
+      background: rgba(15,23,42,1);
+      transform: translateY(-1px);
+    }
+
+    .btn-check {
+      border-radius: 999px;
+      border: none;
+      padding: 7px 11px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      background: radial-gradient(circle at 30% 0, #f97316 0, #ea580c 40%, #b91c1c 100%);
+      color: #020617;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 10px 22px rgba(249,115,22,0.5);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn-check:hover {
+      transform: translateY(-1px) scale(1.02);
+      filter: brightness(1.05);
+      box-shadow: 0 10px 26px rgba(249,115,22,0.75);
+    }
+
+    .btn-check:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 12px rgba(249,115,22,0.6);
+    }
+
+    .feedback {
+      font-size: 0.8rem;
+      min-height: 1.2em;
+    }
+
+    .feedback.ok {
+      color: var(--success);
+    }
+
+    .feedback.error {
+      color: var(--error);
+    }
+
+    .question-card.correct {
+      border-color: rgba(34,197,94,0.95);
+      background:
+        radial-gradient(circle at top left, rgba(34,197,94,0.22), transparent 65%),
+        rgba(15,23,42,0.98);
+      box-shadow: 0 18px 40px rgba(22,163,74,0.35);
+    }
+
+    .question-card.correct .question-number {
+      color: rgba(74,222,128,0.95);
+    }
+
+    .question-card.correct .input-row input {
+      border-color: rgba(34,197,94,0.8);
+      background: rgba(15,23,42,1);
+    }
+
+    .question-card.correct .btn-check {
+      background: radial-gradient(circle at 30% 0, #22c55e 0, #16a34a 40%, #15803d 100%);
+      box-shadow: 0 10px 22px rgba(34,197,94,0.6);
+      color: #022c22;
+    }
+
+    .question-card.correct .btn-check:hover {
+      box-shadow: 0 12px 26px rgba(34,197,94,0.85);
+    }
+
+    .final-message {
+      margin-top: 8px;
+      padding: 16px 14px 16px;
+      border-radius: var(--radius-xl);
+      border: 1px solid rgba(34,197,94,0.9);
+      background:
+        radial-gradient(circle at top, rgba(34,197,94,0.18), transparent 60%),
+        rgba(15,23,42,0.98);
+      box-shadow:
+        0 20px 50px rgba(34,197,94,0.45),
+        0 0 0 1px rgba(15,23,42,0.9);
+      display: none;
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    @media (min-width: 640px) {
+      .final-message {
+        padding: 18px 18px 18px;
+        display: none; /* wird per JS eingeschaltet */
+      }
+    }
+
+    .final-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    @media (min-width: 720px) {
+      .final-inner {
+        flex-direction: row;
+        align-items: center;
+        gap: 18px;
+      }
+    }
+
+    .final-image-wrap {
+      flex: 0 0 auto;
+      max-width: 210px;
+      border-radius: 22px;
+      overflow: hidden;
+      border: 1px solid rgba(34,197,94,0.75);
+      position: relative;
+      box-shadow:
+        0 14px 30px rgba(34,197,94,0.55),
+        0 0 0 1px rgba(15,23,42,0.9);
+    }
+
+    .final-image-wrap::after {
+      content: "🎁";
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-size: 1.5rem;
+      text-shadow: 0 0 10px rgba(34,197,94,0.9);
+    }
+
+    .final-image {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      background: radial-gradient(circle at center, #111827, #020617);
+    }
+
+    .final-text {
+      flex: 1;
+      font-size: 0.96rem;
+      line-height: 1.55;
+      color: #e5e7eb;
+    }
+
+    .final-text strong {
+      font-size: 1.02rem;
+    }
+
+    .final-highlight {
+      margin-top: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      border: 1px dashed rgba(34,197,94,0.9);
+      background: rgba(15,23,42,0.9);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .final-highlight span.icon {
+      font-size: 1.1rem;
+    }
+
+    .footer-note {
+      margin-top: 10px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .confetti {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 9999;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      width: 8px;
+      height: 14px;
+      border-radius: 2px;
+      opacity: 0.8;
+      animation: confetti-fall linear forwards;
+    }
+
+    @keyframes confetti-fall {
+      0% {
+        transform: translate3d(0, -10vh, 0) rotateZ(0deg);
+      }
+      100% {
+        transform: translate3d(var(--x-move, 0px), 110vh, 0) rotateZ(360deg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="glow" aria-hidden="true"></div>
+
+    <header>
+      <div class="title-group">
+        <h1>
+          <span class="emoji">🎉</span>
+          Paulis Birthday Quiz
+        </h1>
+        <p class="subtitle">
+          Beantworte alle Insider-Fragen richtig, ohne neu starten zu müssen. Wenn du alles geschafft hast,
+          wartet eine kleine Geburtstags-Überraschung auf dich. 💌
+        </p>
+      </div>
+      <div class="badge">
+        <span class="badge-dot"></span>
+        Birthday Special · Für Pauli 💖
+      </div>
+    </header>
+
+    <section class="progress-card">
+      <div class="progress-icon">⭐</div>
+      <div class="progress-info">
+        <div class="progress-label">Fortschritt</div>
+        <div class="progress-bar-outer">
+          <div class="progress-bar-inner" id="progressBar"></div>
+        </div>
+      </div>
+      <div class="progress-count" id="progressCount">0 / 9 gelöst</div>
+    </section>
+
+    <section class="questions-grid" id="questionsContainer">
+      <!-- Fragen werden von JS generiert -->
+    </section>
+
+    <section class="final-message" id="finalMessage">
+      <div class="final-inner">
+        <div class="final-image-wrap">
+          <!-- WICHTIG: Ersetze "pauli.jpg" durch den Dateinamen deines echten Fotos im Repo -->
+          <img src="pauli.jpg" alt="Pauli & Joni" class="final-image">
+        </div>
+        <div class="final-text">
+          <p>
+            <strong>Liebe Pauli,</strong><br>
+            ich wünsche dir alles Liebe und Gute zu deinem Geburtstag! 🎂✨
+          </p>
+          <p>
+            Ich würde dich gerne in der Zeit vom <strong>30.03.2026 bis zum 02.04.2026</strong>
+            ein paar Tage nach <strong>Amsterdam</strong> einladen.
+            Das Hotel ist schon gebucht! 🧡
+          </p>
+          <p>
+            Hab dich ganz doll lieb,<br>
+            <strong>dein Joni</strong>
+          </p>
+
+          <div class="final-highlight">
+            <span class="icon">🎁</span>
+            <span>Du hast alle Fragen richtig beantwortet – Überraschung freigeschaltet!</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer-note">
+      Tipp: Du kannst jede Frage beliebig oft raten – es wird nichts zurückgesetzt. 💫
+    </div>
+
+    <div class="confetti" id="confettiContainer" aria-hidden="true"></div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        id: "q1",
+        label: "Frage 1",
+        question: "Wo gehen Queens am liebsten auf Toilette?",
+        answers: ["hochbet", "hochbete"]
+      },
+      {
+        id: "q2",
+        label: "Frage 2",
+        question: "Was trinken PL und JK am liebsten im Sommer?",
+        answers: ["ice coffe", "ice kaffe", "ice kaffe", "icekaffee", "icekaffe", "icecoffe", "ice coffee"]
+      },
+      {
+        id: "q3",
+        label: "Frage 3",
+        question: "Was machen wir am liebsten zum Chillen...?",
+        answers: ["grillen, kasten killen", "grillen kasten killen"]
+      },
+      {
+        id: "q4",
+        label: "Frage 4",
+        question: "Was war Jonis erster Spitzname für PL?",
+        answers: ["fritate"]
+      },
+      {
+        id: "q5",
+        label: "Frage 5",
+        question: "Wie hieß der Dönerladen, bei dem wir uns vor dem Barca-Spiel einen Döner geholt haben?",
+        answers: ["mustafas gemüsekebap", "mustafas gemuesekebap", "mustafa's gemüsekebap", "mustafa's gemuesekebap"]
+      },
+      {
+        id: "q6",
+        label: "Frage 6",
+        question: "Wo musste Möppie immer einen Helm tragen?",
+        answers: ["im spieleparadies", "spieleparadies"]
+      },
+      {
+        id: "q7",
+        label: "Frage 7",
+        question: "Wen wirft Pauli immer auf den Boden?",
+        answers: ["den knochen", "knochen"]
+      },
+      {
+        id: "q8",
+        label: "Frage 8",
+        question: "Im Sommer ist Pauli immer ein kleiner...?",
+        answers: ["blacki"]
+      },
+      {
+        id: "q9",
+        label: "Frage 9",
+        question: "Wo drin transportiert Möppie: Feuerzeug, Bierflasche, Drehzeug, Nagellack, kleines pinkes Handy und Knuspersticks auf einmal?",
+        answers: ["in ihrer bauchtasche", "bauchtasche"]
+      }
+    ];
+
+    const state = {
+      solved: new Set()
+    };
+
+    function normalize(text) {
+      return text
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, " ")
+        .replace(/ä/g, "ae")
+        .replace(/ö/g, "oe")
+        .replace(/ü/g, "ue")
+        .replace(/ß/g, "ss");
+    }
+
+    function renderQuestions() {
+      const container = document.getElementById("questionsContainer");
+      container.innerHTML = "";
+
+      questions.forEach((q, index) => {
+        const card = document.createElement("article");
+        card.className = "question-card";
+        card.id = q.id + "-card";
+
+        card.innerHTML = `
+          <div class="question-number">${q.label}</div>
+          <div class="question-text">${q.question}</div>
+          <div class="input-row">
+            <input
+              type="text"
+              id="${q.id}-input"
+              autocomplete="off"
+              placeholder="Deine Antwort..."
+            />
+            <button class="btn-check" id="${q.id}-btn">
+              Prüfen ✨
+            </button>
+          </div>
+          <div class="feedback" id="${q.id}-feedback"></div>
+        `;
+
+        container.appendChild(card);
+
+        const input = document.getElementById(q.id + "-input");
+        const button = document.getElementById(q.id + "-btn");
+
+        button.addEventListener("click", () => checkAnswer(q.id));
+        input.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            checkAnswer(q.id);
+          }
+        });
+      });
+    }
+
+    function updateProgress() {
+      const total = questions.length;
+      const solvedCount = state.solved.size;
+      const progressBar = document.getElementById("progressBar");
+      const progressCount = document.getElementById("progressCount");
+
+      const percent = (solvedCount / total) * 100;
+      progressBar.style.width = percent + "%";
+      progressCount.textContent = `${solvedCount} / ${total} gelöst`;
+
+      if (solvedCount === total) {
+        showFinalMessage();
+        launchConfetti();
+      }
+    }
+
+    function checkAnswer(questionId) {
+      const q = questions.find((item) => item.id === questionId);
+      if (!q) return;
+
+      const input = document.getElementById(questionId + "-input");
+      const feedback = document.getElementById(questionId + "-feedback");
+      const card = document.getElementById(questionId + "-card");
+
+      const userAnswer = normalize(input.value);
+      if (!userAnswer) {
+        feedback.textContent = "Gib erst eine Antwort ein. 😊";
+        feedback.className = "feedback error";
+        return;
+      }
+
+      const isCorrect = q.answers.some((a) => normalize(a) === userAnswer);
+
+      if (isCorrect) {
+        feedback.textContent = "Richtig! 🥳";
+        feedback.className = "feedback ok";
+        card.classList.add("correct");
+        input.disabled = true;
+        document.getElementById(questionId + "-btn").disabled = true;
+        state.solved.add(questionId);
+        updateProgress();
+      } else {
+        feedback.textContent = "Leider falsch – versuch's einfach nochmal! ❤️";
+        feedback.className = "feedback error";
+      }
+    }
+
+    function showFinalMessage() {
+      const final = document.getElementById("finalMessage");
+      final.style.display = "block";
+      final.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    function launchConfetti() {
+      const container = document.getElementById("confettiContainer");
+      container.innerHTML = "";
+
+      const pieces = 120;
+      for (let i = 0; i < pieces; i++) {
+        const piece = document.createElement("div");
+        piece.className = "confetti-piece";
+
+        const colors = ["#f97316", "#fb923c", "#facc15", "#22c55e", "#38bdf8", "#e879f9"];
+        piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+        piece.style.left = Math.random() * 100 + "vw";
+        piece.style.animationDuration = 3 + Math.random() * 2 + "s";
+        piece.style.animationDelay = Math.random() * 0.5 + "s";
+        piece.style.setProperty("--x-move", (Math.random() * 200 - 100) + "px");
+
+        container.appendChild(piece);
+      }
+
+      setTimeout(() => {
+        container.innerHTML = "";
+      }, 6000);
+    }
+
+    renderQuestions();
+    updateProgress();
+  </script>
+</body>
+</html>
